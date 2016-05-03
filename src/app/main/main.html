@@ -1,0 +1,9 @@
+<div class="container" id="mainContainer" data-ng-controller="mainCtrl">
+    <button data-ng-click="goFullscreen()" data-ng-if="!fullscreen">Enable fullscreen</button>
+    <div data-ng-repeat="element in elementList" data-fullscreen>
+        <div class="component" data-ng-class="{visible: element.isVisible, invisible: !element.isVisible}" data-ng-style="{'top': element.pos.top + '%', 'left': element.pos.left + '%'}">{{element.content}}</div>
+    </div>
+    <div class="component animate-hide" data-ng-hide="hideScroll">
+        {{horizontalScroll}}
+    </div>
+</div>
