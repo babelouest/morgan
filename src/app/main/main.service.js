@@ -7,6 +7,10 @@ angular.module('morgan')
     dataFactory.getSource = function () {
         return $http.get(urlSource);
     };
+    
+    dataFactory.getAnyUrl = function(url) {
+        return $http.get(url);
+    };
 
     return dataFactory;
 }]);

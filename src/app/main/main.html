@@ -1,9 +1,13 @@
-<div class="container" id="mainContainer" data-ng-controller="mainCtrl">
-    <button data-ng-click="goFullscreen()" data-ng-if="!fullscreen">Enable fullscreen</button>
-    <div data-ng-repeat="element in elementList" data-fullscreen>
-        <div class="component" data-ng-class="{visible: element.isVisible, invisible: !element.isVisible}" data-ng-style="{'top': element.pos.top + '%', 'left': element.pos.left + '%'}">{{element.content}}</div>
+<div class="container" id="mainContainer" data-ng-controller="morganCtrl">
+    <div data-ng-repeat="source in sourceList" data-fullscreen>
+        <div 
+            class="component block" 
+            data-ng-class="{visible: source.isVisible, invisible: !source.isVisible}" 
+            data-ng-style="{'top': source.pos.top + '%', 'left': source.pos.left + '%'}"
+            data-ng-bind-html="source.content">
+        </div>
     </div>
-    <div class="component animate-hide" data-ng-hide="hideScroll">
+    <div class="component marquee">
         {{horizontalScroll}}
     </div>
 </div>

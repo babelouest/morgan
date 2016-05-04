@@ -1,1 +1,1 @@
-angular.module('morgan', ['ui.router', 'FBAngular', 'ngAnimate']);
+angular.module('morgan', ['ui.router', 'FBAngular', 'ngAnimate', 'ngSanitize']);
