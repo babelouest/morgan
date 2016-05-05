@@ -16,6 +16,8 @@ angular.module("morgan").controller("morganCtrl", [
         $scope.scrollList = [];
         $scope.horizontalScroll = "";
         
+        $scope.showButton = true;
+        
         function init() {
             morganFactory.getSource()
                 .then(function(response) {
@@ -145,13 +147,16 @@ angular.module("morgan").controller("morganCtrl", [
         }
         
         $scope.goFullscreen = function () {
+            Fullscreen.toggleAll();
+            $scope.showButton = !$scope.showButton;
+            /*console.log(Fullscreen);
             if (Fullscreen.isFullscreen()) {
                 $scope.fullscreen = false;
                 Fullscreen.cancel();
             } else {
                 $scope.fullscreen = true;
                 Fullscreen.all();
-            }
+            }*/
         }
 
         function showAndHideBlock(element) {
