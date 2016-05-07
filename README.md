@@ -2,6 +2,8 @@
 
 Small application used to display data through a "magic mirror".
 
+![Morgan implementation](https://raw.githubusercontent.com/babelouest/morgan/master/mirror_making/4.jpg)
+
 Display randomly on the screen the date/time and the weather, and display rss feeds titles in the bottom as a scrolling text.
 
 Small 1-page application that uses AngularJS. Also uses google services to convert rss feeds to a json rest api.
@@ -26,10 +28,14 @@ A source file has the following format:
 Each source json object in the array must have the following parameters:
 
 `id`: an identifier for the source. Your choice, will not be displayed anyway.
-`display`: display type, values can be `block` for a randomly display block, or `scroll` for a bottom text scroll
-`type`: source type, for now supports `yahooWeather`, `time` or `rss`
-`url`: mandatory for source types `rss` and `yahooWeather`, provides the url to get the data
-`refresh`: specify the time (in seconds) when the source will be refreshed
+
+`display`: display type, values can be `block` for a randomly display block, or `scroll` for a bottom text scroll.
+
+`type`: source type, for now supports `yahooWeather`, `time` or `rss`.
+
+`url`: mandatory for source types `rss` and `yahooWeather`, provides the url to get the data.
+
+`refresh`: specify the time (in seconds) when the source will be refreshed.
 
 # Installation
 
