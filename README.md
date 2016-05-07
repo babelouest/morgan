@@ -58,3 +58,5 @@ Run `gulp build` to build a new standalone application. The application will be 
 I used a two-way mirror, an old android tablet, and some tools to fix the tablet behind the mirror.
 
 A two-way mirror can be baught by itself, or you can add a mirror window film to a window glass.
+
+Pictures of the fabrications steps are available in the folder `mirror_making`.
