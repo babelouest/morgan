@@ -2,9 +2,9 @@
 
 Small application used to display data through a "magic mirror".
 
-Display randomly on the screen the date/time and the weather and display rss feeds titles in the bottom as a scrolling text.
+Display randomly on the screen the date/time and the weather, and display rss feeds titles in the bottom as a scrolling text.
 
-Small 1-page application that uses AngularJS and google services to convert rss feeds to a json rest api.
+Small 1-page application that uses AngularJS. Also uses google services to convert rss feeds to a json rest api.
 
 # Configuration
 
