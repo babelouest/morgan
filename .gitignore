@@ -3,3 +3,5 @@ bower_components
 .tmp
 typings
 coverage
+src/config.json
+dist/config.json

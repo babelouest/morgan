@@ -8,7 +8,7 @@
             data-ng-bind-html="source.content">
         </div>
     </div>
-    <div class="component marquee">
+    <div class="component" data-ng-class="{'marquee': showScroll, 'stopped': !showScroll}">
         {{horizontalScroll}}
     </div>
 </div>

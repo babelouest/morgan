@@ -10,6 +10,19 @@ Small 1-page application that uses AngularJS. Also uses google services to conve
 
 # Configuration
 
+Create a config.json file. You can use the file config.json.sample to start.
+
+The content of the config file is the following:
+
+```json
+{
+  "lastupdate": 201605081210, // A timestamp of the last time this file was updated, used to refresh all sources
+  "lang": "fr", // Language for display and locale
+  "openweatherAppId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", // Openweather AppId for openweather sources. Get yours at http://openweathermap.org/api
+  "units": "metric" // Units for openweather values can be `metric` or `imperial`
+}
+```
+
 Modify the file `dist/sources.json` to add, modify or remove sources.
 
 A source file has the following format:
@@ -25,17 +38,20 @@ A source file has the following format:
   }
 ]
 ```
+
 Each source json object in the array must have the following parameters:
 
 `id`: an identifier for the source. Your choice, will not be displayed anyway.
 
 `display`: display type, values can be `block` for a randomly display block, or `scroll` for a bottom text scroll.
 
-`type`: source type, for now supports `yahooWeather`, `time` or `rss`.
+`type`: source type, for now supports `openWeather`, `yahooWeather`, `time` or `rss`.
 
 `url`: mandatory for source types `rss` and `yahooWeather`, provides the url to get the data.
 
 `refresh`: specify the time (in seconds) when the source will be refreshed.
+
+`locationId`: used for openWeather types, specify the location id of the weather. You can find your location at http://openweathermap.org/city
 
 # Installation
 
@@ -45,7 +61,7 @@ Install the folder `dist/` to a folder accessible to your web server, example:
 $ cp -R dist /var/www/morgan
 ```
 
-Then on your browser, go to the url `http://<your_web_server>/morgan`
+Set your files `config.json` and `sources.json` as explained, then on your browser, go to the url `http://<your_web_server>/morgan`
 
 Click on the `fullscreen` button to display the page in fullscreen mode.
 

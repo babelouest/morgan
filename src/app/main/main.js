@@ -2,16 +2,18 @@ google.load("feeds", "1");
 
 angular.module("morgan").controller("morganCtrl", [
     "$scope",
+    "$q",
     "$timeout",
     "$interval",
     "Fullscreen",
     "morganFactory",
-    function($scope, $timeout, $interval, Fullscreen, morganFactory) {
+    function($scope, $q, $timeout, $interval, Fullscreen, morganFactory) {
         
         $scope.isVisible = false;
         $scope.fullscreen = false;
-        $scope.hideScroll = false;
+        $scope.showScroll = false;
         
+        $scope.config = {};
         $scope.sourceList = [];
         $scope.scrollList = [];
         $scope.horizontalScroll = "";
@@ -19,15 +21,45 @@ angular.module("morgan").controller("morganCtrl", [
         $scope.showButton = true;
         
         function init() {
-            morganFactory.getSource()
-                .then(function(response) {
-                    $scope.sourceList = response.data;
-                    for (key in $scope.sourceList) {
-                        sourceLoop($scope.sourceList[key]);
-                    }
-                    displayBlocks();
-                });
+            loadSources();
+            refreshConfig();
+        }
+        
+        function loadSources() {
+            $q.all([
+                morganFactory.getSource(),
+                morganFactory.getConfig()
+            ])
+            .then(function (response) {
+                $scope.sourceList = response[0].data;
+                $scope.config = response[1].data;
+                for (key in $scope.sourceList) {
+                    sourceLoop($scope.sourceList[key]);
+                }
+                displayBlocks();
                 displayScroll();
+            });
+        }
+        
+        function refreshConfig() {
+            // Refresh config every hour and reload sources if config.lastupdate has changed
+            setInterval(function() {
+                morganFactory.getConfig()
+                    .then(function (response) {
+                        if (!!response.data.lastupdate && response.data.lastupdate > $scope.config.lastupdate) {
+                            $scope.config = response.data;
+                            morganFactory.getSource()
+                                .then(function (sourceResponse) {
+                                    $scope.sourceList = sourceResponse.data;
+                                        for (key in $scope.sourceList) {
+                                            sourceLoop($scope.sourceList[key]);
+                                        }
+                                        displayBlocks();
+                                        displayScroll();
+                                });
+                        }
+                    });
+            }, 1000*60*60);
         }
         
         function displayBlocks() {
@@ -41,16 +73,28 @@ angular.module("morgan").controller("morganCtrl", [
         function displayScroll() {
             if ($scope.scrollList.length > 0) {
                 // Pick a random element in $scope.scrollList
-                var scrollItem = Math.floor(Math.random()*$scope.scrollList.length);
-                $scope.horizontalScroll = $scope.scrollList[scrollItem].content;
+                var displayOrNot = Math.floor(Math.random()*2);
+                if (displayOrNot === 0) {
+                    var scrollItem = Math.floor(Math.random()*$scope.scrollList.length);
+                    $scope.horizontalScroll = $scope.scrollList[scrollItem].content;
+                } else {
+                    $scope.horizontalScroll = "";
+                }
+            } else {
+                $scope.horizontalScroll = "";
             }
             setInterval(function() {
                 if ($scope.scrollList.length > 0) {
                     // Pick a random element in $scope.scrollList
-                    var scrollItem = Math.floor(Math.random()*$scope.scrollList.length);
-                    $scope.horizontalScroll = $scope.scrollList[scrollItem].content;
+                    var displayOrNot = Math.floor(Math.random()*2);
+                    if (displayOrNot === 0) {
+                        var scrollItem = Math.floor(Math.random()*$scope.scrollList.length);
+                        $scope.horizontalScroll = $scope.scrollList[scrollItem].content;
+                    } else {
+                        $scope.horizontalScroll = "";
+                    }
                 }
-            }, 30*1000);
+            }, 20*1000);
         }
         
         function displayBlock(sourceIndex) {
@@ -96,6 +140,12 @@ angular.module("morgan").controller("morganCtrl", [
                     source.isVisible = false;
                     source.content = "meteo";
                     source.pos = { top: 0, left: 0 };
+                    getYahooWeatherData(source);
+                    break;
+                case "openWeather":
+                    source.isVisible = false;
+                    source.content = "meteo";
+                    source.pos = { top: 0, left: 0 };
                     getOpenWeatherData(source);
                     break;
                 case "rss":
@@ -109,33 +159,62 @@ angular.module("morgan").controller("morganCtrl", [
         
         function getTimeData(source) {
             var currentDate = new Date();
-            source.content = currentDate.toLocaleDateString(navigator.language, {weekday: "long", year: "numeric", month: "long", day: "numeric"}) + "<br>" +
+            source.content = currentDate.toLocaleDateString($scope.config.lang, {weekday: "long", year: "numeric", month: "long", day: "numeric"}) + "<br>" +
                             (currentDate.getHours()<10?"0":"") + currentDate.getHours() + ":" + (currentDate.getMinutes()<10?"0":"") + currentDate.getMinutes();
         }
         
-        function getOpenWeatherData(source) {
+        function getYahooWeatherData(source) {
             morganFactory.getAnyUrl(source.url)
                 .then(function(response) {
                     source.content = response.data.query.results.channel.location.city + "<br>" +
-                                    response.data.query.results.channel.item.condition.temp + " °C" + "\n" + "<br>" +
-                                    "<img src=\"http://l.yimg.com/a/i/us/we/52/" + response.data.query.results.channel.item.condition.code + ".gif\" alt=\"condition\">"
+                                    response.data.query.results.channel.item.condition.temp + " °C" + "<br>" +
+                                    "<img src=\"http://l.yimg.com/a/i/us/we/52/" + response.data.query.results.channel.item.condition.code + ".gif\" alt=\"condition\">";
                                     
                 });
         }
         
+        function getOpenWeatherData(source) {
+          if (!!source.id && !!$scope.config.openweatherAppId) {
+              var url = "http://api.openweathermap.org/data/2.5/weather?id=" + source.locationId + "&appId=" + $scope.config.openweatherAppId;
+              var units = " °C";
+              if (!!$scope.config.units) {
+                  url += "&units=" + $scope.config.units;
+                  if ($scope.config.units === "imperial") {
+                      units = " °F";
+                  }
+              }
+              if (!!$scope.config.lang) {
+                  url += "&lang=" + $scope.config.lang;
+              }
+              morganFactory.getAnyUrl(url)
+                  .then(function(response) {
+                      var sunrise = new Date();
+                      var sunset = new Date();
+                      sunrise.setUTCSeconds(response.data.sys.sunrise);
+                      sunset.setUTCSeconds(response.data.sys.sunset);
+                      
+                      source.content = response.data.name + "<br>" +
+                                        response.data.weather[0].description + "<br>" +
+                                        response.data.main.temp + units + "<br/>" +
+                                        "<i class=\"owf owf-" + response.data.weather[0].id + " owf-3x\">";
+                  });
+            }
+        }
+        
         function getRss(source) {
+            $scope.showScroll = false;
             var feed = new google.feeds.Feed(source.url);
-			feed.setNumEntries(10);
-			feed.load(function(result) {
-                cleanScrolls(source.id);
-                for (key in result.feed.entries) {
-                    var entry = {};
-                    entry.id = source.id;
-                    entry.content = result.feed.entries[key].title;
-                    $scope.scrollList.push(entry);
-                    $scope.horizontalScroll = entry.content;
-                }
-			});
+                feed.setNumEntries(10);
+                feed.load(function(result) {
+                    cleanScrolls(source.id);
+                    for (key in result.feed.entries) {
+                        var entry = {};
+                        entry.id = source.id;
+                        entry.content = result.feed.entries[key].title;
+                        $scope.scrollList.push(entry);
+                    }
+                    $scope.showScroll = true;
+                });
         }
         
         function cleanScrolls(id) {
@@ -149,38 +228,23 @@ angular.module("morgan").controller("morganCtrl", [
         $scope.goFullscreen = function () {
             Fullscreen.toggleAll();
             $scope.showButton = !$scope.showButton;
-            /*console.log(Fullscreen);
-            if (Fullscreen.isFullscreen()) {
-                $scope.fullscreen = false;
-                Fullscreen.cancel();
-            } else {
-                $scope.fullscreen = true;
-                Fullscreen.all();
-            }*/
         }
 
         function showAndHideBlock(element) {
-            if (element.type === "block") {
-                var showTimeout = Math.floor((Math.random()*6)+1)*1000;
-                var hideTimeout = Math.floor((Math.random()*6)+1)*1000;
-                var posX = Math.floor((Math.random()*90));
-                var posY = Math.floor((Math.random()*90));
-                
-                element.pos.top = posX;
-                element.pos.left = posY;
+            var showTimeout = Math.floor((Math.random()*6)+1)*1000;
+            var hideTimeout = Math.floor((Math.random()*6)+1)*1000;
+            var posX = Math.floor((Math.random()*90));
+            var posY = Math.floor((Math.random()*90));
+            
+            element.pos.top = posX;
+            element.pos.left = posY;
+            $timeout(function() {
+                element.isVisible = true;
                 $timeout(function() {
-                    element.isVisible = true;
-                    $timeout(function() {
-                        element.isVisible = false;
-                    }, showTimeout);
+                    element.isVisible = false;
+                }, showTimeout);
 
-                }, hideTimeout);
-            } else if (element.type === "scroll") {
-                $scope.hideScroll = true;
-            }
-        }
-        
-        function scrollBlock(element) {
+            }, hideTimeout);
         }
         
         init();
