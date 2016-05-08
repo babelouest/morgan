@@ -10,18 +10,27 @@ Small 1-page application that uses AngularJS. Also uses google services to conve
 
 # Configuration
 
-Create a config.json file. You can use the file config.json.sample to start.
+## config.json
+
+Create a `dist/config.json` file. You can use the file `config.json.sample` to start.
 
 The content of the config file is the following:
 
 ```json
 {
-  "lastupdate": 201605081210, // A timestamp of the last time this file was updated, used to refresh all sources
-  "lang": "fr", // Language for display and locale
-  "openweatherAppId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", // Openweather AppId for openweather sources. Get yours at http://openweathermap.org/api
-  "units": "metric" // Units for openweather values can be `metric` or `imperial`
+  "lastupdate": 201605081210,
+  "lang": "fr",
+  "openweatherAppId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "units": "metric"
 }
 ```
+
+`lastupdate`: A timestamp of the last time this file was updated, used to refresh all sources
+`lang`: Language for display and localization
+`openweatherAppId`: Openweather AppId for openweather sources. Get yours at http://openweathermap.org/api
+`units`: Units for openweather values can be `metric` or `imperial`
+
+## sources.json
 
 Modify the file `dist/sources.json` to add, modify or remove sources.
 
