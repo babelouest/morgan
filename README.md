@@ -8,6 +8,12 @@ Display randomly on the screen the date/time and the weather, and display rss fe
 
 Small 1-page application that uses AngularJS. Also uses google services to convert rss feeds to a json rest api.
 
+# 2017 update
+
+Google feed API is [no longer available](https://developers.google.com/feed/), so I removed the feed reader. I also removed the fullscreen button which is useless if I use dolphin browser on my Android tablet, since dolphin makes it possible to have the page fullscreen when you scroll down.
+
+This project is not really maintained. When I'll have the time, I'll start a new application for the same purpose (magic mirror), but with more possibilities.
+
 # Configuration
 
 ## config.json
