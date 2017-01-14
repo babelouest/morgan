@@ -1,13 +1,13 @@
-google.load("feeds", "1");
+//google.load("feeds", "1");
 
 angular.module("morgan").controller("morganCtrl", [
     "$scope",
     "$q",
     "$timeout",
     "$interval",
-    "Fullscreen",
+//    "Fullscreen",
     "morganFactory",
-    function($scope, $q, $timeout, $interval, Fullscreen, morganFactory) {
+    function($scope, $q, $timeout, $interval/*, Fullscreen*/, morganFactory) {
         
         $scope.isVisible = false;
         $scope.fullscreen = false;
@@ -148,12 +148,12 @@ angular.module("morgan").controller("morganCtrl", [
                     source.pos = { top: 0, left: 0 };
                     getOpenWeatherData(source);
                     break;
-                case "rss":
+                /*case "rss":
                     source.isVisible = false;
                     source.content = "rss";
                     source.pos = { top: 0, left: 0 };
                     getRss(source);
-                    break;
+                    break;*/
             }
         }
         
@@ -201,7 +201,7 @@ angular.module("morgan").controller("morganCtrl", [
             }
         }
         
-        function getRss(source) {
+        /*function getRss(source) {
             $scope.showScroll = false;
             var feed = new google.feeds.Feed(source.url);
                 feed.setNumEntries(10);
@@ -215,7 +215,7 @@ angular.module("morgan").controller("morganCtrl", [
                     }
                     $scope.showScroll = true;
                 });
-        }
+        }*/
         
         function cleanScrolls(id) {
             for (var i=$scope.scrollList.length-1; i>=0; i--) {
@@ -225,10 +225,10 @@ angular.module("morgan").controller("morganCtrl", [
             }
         }
         
-        $scope.goFullscreen = function () {
+        /*$scope.goFullscreen = function () {
             Fullscreen.toggleAll();
             $scope.showButton = !$scope.showButton;
-        }
+        }*/
 
         function showAndHideBlock(element) {
             var showTimeout = Math.floor((Math.random()*6)+1)*1000;
