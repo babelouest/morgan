@@ -5,3 +5,4 @@ typings
 coverage
 src/config.json
 dist/config.json
+dist/
